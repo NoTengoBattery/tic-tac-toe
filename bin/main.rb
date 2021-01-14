@@ -1,8 +1,6 @@
 #!/usr/bin/env ruby
 require '../lib/game_logic'
 
-
-
 def print_board(matrix)
   bu = "\n\n\n\n\e[4A\e[C" # Print new lines, move back and to the right
   ni = "\e[B" # Move down without moving horizontally
@@ -52,6 +50,7 @@ until game.game_draw
   if (1..9).include? position.to_i
     puts
     break if game.execute_turn(position)
+
     print_board(game.board)
   else
     puts 'Invalid Input'
