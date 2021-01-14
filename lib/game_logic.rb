@@ -60,7 +60,7 @@ class Board
 end
 
 class Game
-  attr_reader :turn, :current_player, :valid_values
+  attr_reader :turn, :current_player, :valid_values, :game_draw
 
   def initialize
     @players_symbols = %w[X O]
@@ -70,7 +70,7 @@ class Game
     @valid_values = (1..9)
     @turn = 1
     @_selector = 0
-    @game_end = false
+    @game_draw = false
   end
 
   def register_player(name)
@@ -96,15 +96,12 @@ class Game
 
     @board.update_board(outter, inner, @current_player.symbol)
     @current_player.update_player_board(outter, inner, @board.cell(outter, inner))
-    p @board.printable_board
     return true if current_player.winner?(@board.magic_number)
 
     @_selector = (@_selector + 1) % @players.length
     @current_player = @players[@_selector]
     @turn += 1
-    @game_end = true unless @valid_values.include?(@turn)
-    p @game_end
-    p @turn
+    @game_draw = true unless @valid_values.include?(@turn)
+    false
   end
 end
-

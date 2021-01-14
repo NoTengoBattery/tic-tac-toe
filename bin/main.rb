@@ -1,9 +1,7 @@
 #!/usr/bin/env ruby
+require '../lib/game_logic'
 
-mock_game_end = false
-mock_player1_symbol = 'X'
-mock_player2_symbol = 'O'
-mock_board = [%w[1 2 3], %w[4 5 6], %w[7 8 9]]
+
 
 def print_board(matrix)
   bu = "\n\n\n\n\e[4A\e[C" # Print new lines, move back and to the right
@@ -31,50 +29,38 @@ def print_board(matrix)
 end
 
 # Introduction to the game
+game = Game.new
 puts '~~~~~~~ Welcome to TicTacToe ~~~~~~~'
 puts
 print 'Enter name for player 1: '
 player1_name = gets.chomp
-# This is mock logic
-mock_player_name = player1_name
-# Here ends mock logic
-puts "Player #{player1_name} is #{mock_player1_symbol}" # Defines Player 1
+game.register_player(player1_name)
+puts "Player #{player1_name} is X" # Defines Player 1
 print 'Enter name for player 2: '
 player2_name = gets.chomp
-puts "Player #{player2_name} is #{mock_player2_symbol}" # Defines Player 2
+game.register_player(player2_name)
+puts "Player #{player2_name} is O" # Defines Player 2
 puts
 puts '~~~~~~~  Get ready to play!  ~~~~~~~'
 puts
-print_board(mock_board)
+print_board(game.board)
 puts
 
-mock_player_selector = false
-mock_turn_counter = 1
-mock_is_winning = false
-
-until mock_game_end
-  print "Turn ##{mock_turn_counter}: player #{mock_player_name} enter the coordinates for your symbol: "
+until game.game_draw
+  print "Turn ##{game.turn}: #{game.current_player.name} enter the coordinates for your symbol: "
   position = gets.chomp
   if (1..9).include? position.to_i
     puts
-    # This is mock logic, the real logic is inside the Game class
-    mock_is_winning = rand(100) <= 25 # This will mock the signal from the game logic (without computing it)
-    mock_game_end = (mock_turn_counter == 9 || mock_is_winning)
-    break if mock_game_end
-
-    mock_player_selector = !mock_player_selector
-    mock_player_name = mock_player_selector ? player2_name : player1_name
-    mock_turn_counter += 1
-    # Here the mock logic ends
-    print_board(mock_board)
+    break if game.execute_turn(position)
+    print_board(game.board)
   else
     puts 'Invalid Input'
     next
   end
 end
 
-if mock_is_winning
-  puts "Winning move: Player #{mock_player_name} won in turn ##{mock_turn_counter}"
-else
+if game.game_draw
   puts 'Game ended in draw'
+else
+  puts "Winning move: Player #{game.current_player.name} won in turn ##{game.turn}"
 end
