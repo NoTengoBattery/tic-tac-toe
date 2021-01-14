@@ -4,8 +4,6 @@ mock_game_end = false
 mock_player1_symbol = 'X'
 mock_player2_symbol = 'O'
 mock_board = [%w[1 2 3], %w[4 5 6], %w[7 8 9]]
-mock_player_name = 'Active player'
-mock_result = 'Draw'
 
 def print_board(matrix)
   bu = "\n\n\n\n\e[4A\e[C" # Print new lines, move back and to the right
@@ -37,6 +35,9 @@ puts '~~~~~~~ Welcome to TicTacToe ~~~~~~~'
 puts
 print 'Enter name for player 1: '
 player1_name = gets.chomp
+# This is mock logic
+mock_player_name = player1_name
+# Here ends mock logic
 puts "Player #{player1_name} is #{mock_player1_symbol}" # Defines Player 1
 print 'Enter name for player 2: '
 player2_name = gets.chomp
@@ -47,14 +48,24 @@ puts
 print_board(mock_board)
 puts
 
-# Mock the flow of tyhe game
-# The player will come form the logic and will change to show the active player
-until mock_game_end # The game_end  will come form the logic and will end the game
-  print "Player #{mock_player_name} enter the coordinates for your symbol: "
+mock_player_selector = false
+mock_turn_counter = 1
+mock_is_winning = false
+
+until mock_game_end
+  print "Turn ##{mock_turn_counter}: player #{mock_player_name} enter the coordinates for your symbol: "
   position = gets.chomp
   if (1..9).include? position.to_i
     puts
-    # mock_board.method(position) this will call the object to update the current state of the board
+    # This is mock logic, the real logic is inside the Game class
+    mock_is_winning = rand(100) <= 25 # This will mock the signal from the game logic (without computing it)
+    mock_game_end = (mock_turn_counter == 9 || mock_is_winning)
+    break if mock_game_end
+
+    mock_player_selector = !mock_player_selector
+    mock_player_name = mock_player_selector ? player2_name : player1_name
+    mock_turn_counter += 1
+    # Here the mock logic ends
     print_board(mock_board)
   else
     puts 'Invalid Input'
@@ -62,4 +73,8 @@ until mock_game_end # The game_end  will come form the logic and will end the ga
   end
 end
 
-print mock_result # will print message according to the result of the game that will be provide by the game logic
+if mock_is_winning
+  puts "Winning move: Player #{mock_player_name} won in turn ##{mock_turn_counter}"
+else
+  puts 'Game ended in draw'
+end
