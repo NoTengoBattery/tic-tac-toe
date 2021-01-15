@@ -36,7 +36,7 @@ module Blessings
   end
 
   def self.reset_color
-    print("\e[39m")
+    print("\e[0m")
   end
 
   def self.horizontal_bar(content, repetitions)
