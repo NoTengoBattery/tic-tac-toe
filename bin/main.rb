@@ -25,11 +25,13 @@ puts
 print 'Enter name for player 1: '
 player1_name = gets.chomp
 game.register_player(player1_name)
-puts "Player #{player1_name} is X"
+player1 = game.last_registered_player
+puts "Player #{player1.name} is #{player1.symbol}"
 print 'Enter name for player 2: '
 player2_name = gets.chomp
 game.register_player(player2_name)
-puts "Player #{player2_name} is O"
+player2 = game.last_registered_player
+puts "Player #{player2.name} is #{player2.symbol}"
 puts
 puts '~~~~~~~  Get ready to play!  ~~~~~~~'
 puts

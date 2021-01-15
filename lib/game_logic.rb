@@ -93,6 +93,10 @@ class Game
     @current_player = player if current_player.nil?
   end
 
+  def last_registered_player
+    @players[-1]
+  end
+
   def board
     @board.printable_board
   end
