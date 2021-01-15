@@ -1,29 +1,22 @@
 #!/usr/bin/env ruby
-require '../lib/game_logic'
+
+require_relative '../lib/game_logic'
+require_relative '../lib/blessings'
 
 def print_board(matrix)
-  bu = "\n\n\n\n\e[4A\e[C" # Print new lines, move back and to the right
-  ni = "\e[B" # Move down without moving horizontally
-  nl = "\e[B\e[3D" # Move down and move to the left
-  lu = "\e[A\e[D" # Move up and to the left
-  bo = "\e[1m" # Make the terminal's font bold
-  iv = "\e[7m" # Make the terminal's font invert colors
-  rs = "\e[0m" # Reset the terminal's font attributes
-
+  spacing = 1
+  height = matrix.length * (2 * spacing + 2) + 1
+  Blessings.insert_newline(height)
+  Blessings.relative_move_to(0, -height)
   matrix.each do |internal|
-    print bu
-    max_index = internal.length - 1
-    internal.each_with_index do |item, internal_index|
-      printf "   #{nl} #{bo}#{item}#{rs} #{nl}#{ni}#{iv}---#{rs}"
-      next unless internal_index < max_index
-
-      print "#{iv}+#{rs}#{lu}"
-      2.times { print "#{iv}|#{rs}#{lu}" }
-      print "#{iv}|#{rs}"
+    offset = 0
+    internal.each do |item|
+      offset = Blessings.box(item, spacing, '#', top: true, left: true, bottom: true, right: true) - 1
+      Blessings.relative_move_to(offset, 0)
     end
-    puts
+    Blessings.relative_move_to(-offset * internal.length, offset)
   end
-  print "#{lu}\e[K\n" # Move up and errase that line, then move back down
+  Blessings.relative_move_to(0, 1)
 end
 
 # Introduction to the game
