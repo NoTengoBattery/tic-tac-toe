@@ -31,6 +31,14 @@ module Blessings
     print("\e[u\u001B8")
   end
 
+  def self.red
+    print("\e[31m")
+  end
+
+  def self.reset_color
+    print("\e[39m")
+  end
+
   def self.horizontal_bar(content, repetitions)
     repetitions.times { print content }
   end

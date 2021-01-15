@@ -3,20 +3,22 @@
 require_relative '../lib/game_logic'
 require_relative '../lib/blessings'
 
-def print_board(matrix)
+def print_board(matrix, separator)
   spacing = 1
   height = matrix.length * (2 * spacing + 2) + 1
-  Blessings.insert_newline(height)
-  Blessings.relative_move_to(0, -height)
-  matrix.each do |internal|
+  Blessings.insert_newline(height + 2)
+  Blessings.relative_move_to(0, -height - 1)
+  matrix.each_with_index do |internal, outter_index|
     offset = 0
-    internal.each do |item|
-      offset = Blessings.box(item, spacing, '#', top: true, left: true, bottom: true, right: true) - 1
+    internal.each_with_index do |item, inner_index|
+      right = inner_index != (internal.length - 1)
+      bottom = outter_index != (matrix.length - 1)
+      offset = Blessings.box(item, spacing, separator, bottom: bottom, right: right) - 1
       Blessings.relative_move_to(offset, 0)
     end
     Blessings.relative_move_to(-offset * internal.length, offset)
   end
-  Blessings.relative_move_to(0, 1)
+  Blessings.relative_move_to(0, 2)
 end
 
 game = Game.new
@@ -34,30 +36,40 @@ player2 = game.last_registered_player
 puts "Player #{player2.name} is #{player2.symbol}"
 puts
 puts '~~~~~~~  Get ready to play!  ~~~~~~~'
-puts
-print_board(game.board)
-puts
+print_board(game.board, '*')
 
 until game.game_draw
-  print "Turn ##{game.turn}: #{game.current_player.name} enter the coordinates for your symbol: "
-  position = gets.chomp.to_i
-  if game.valid_values.include? position
+  current_player = game.current_player
+  print "Turn ##{game.turn}: #{current_player.name} enter the coordinates for #{current_player.symbol}: "
+  begin
+    position = gets.chomp.to_i
+  rescue Interrupt
     puts
+    puts 'Finishing the game: execution interrupted'
+    exit
+  end
+  if game.valid_values.include? position
     begin
       break if game.execute_turn(position)
     rescue StandardError
-      puts 'Position Already Chosen'
+      Blessings.red
+      puts 'The selected position is not available, please try again'
+      Blessings.reset_color
     else
-      print_board(game.board)
+      print_board(game.board, '#')
     end
   else
-    puts 'Invalid Input'
+    Blessings.red
+    puts 'Your input was invalid, try a different input'
+    Blessings.reset_color
     next
   end
 end
 
+print 'End of the game: '
 if game.game_draw
-  puts 'Game ended in draw'
+  puts 'No winner, game ended in a draw'
 else
-  puts "Winning move: Player #{game.current_player.name} won in turn ##{game.turn}"
+  puts "Player #{current_player.name} (played #{current_player.symbol}) won the game in turn ##{game.turn}"
 end
+print_board(game.board, '+')
