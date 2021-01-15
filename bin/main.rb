@@ -19,18 +19,17 @@ def print_board(matrix)
   Blessings.relative_move_to(0, 1)
 end
 
-# Introduction to the game
 game = Game.new
 puts '~~~~~~~ Welcome to TicTacToe ~~~~~~~'
 puts
 print 'Enter name for player 1: '
 player1_name = gets.chomp
 game.register_player(player1_name)
-puts "Player #{player1_name} is X" # Defines Player 1
+puts "Player #{player1_name} is X"
 print 'Enter name for player 2: '
 player2_name = gets.chomp
 game.register_player(player2_name)
-puts "Player #{player2_name} is O" # Defines Player 2
+puts "Player #{player2_name} is O"
 puts
 puts '~~~~~~~  Get ready to play!  ~~~~~~~'
 puts
@@ -39,12 +38,16 @@ puts
 
 until game.game_draw
   print "Turn ##{game.turn}: #{game.current_player.name} enter the coordinates for your symbol: "
-  position = gets.chomp
-  if (1..9).include? position.to_i
+  position = gets.chomp.to_i
+  if game.valid_values.include? position
     puts
-    break if game.execute_turn(position)
-
-    print_board(game.board)
+    begin
+      break if game.execute_turn(position)
+    rescue StandardError
+      puts 'Position Already Chosen'
+    else
+      print_board(game.board)
+    end
   else
     puts 'Invalid Input'
     next

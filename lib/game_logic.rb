@@ -16,7 +16,6 @@ class Player
 
   def winner?(magic_number)
     player_magic = magic_number * @player_id
-    # Test the sum of all the rows
     magic_sum_d1 = 0
     magic_sum_d2 = 0
     @array.length.times do |outter_index|
@@ -89,7 +88,7 @@ class Game
     outter = nil
     inner = nil
     @board.printable_board.each_with_index do |item, outter_index|
-      inner = inner.nil? ? item.find_index(selected_index) : break
+      inner = inner.nil? ? item.find_index(selected_index.to_s) : break
       outter = outter_index
     end
     raise 'The selected index is not available' if inner.nil?
