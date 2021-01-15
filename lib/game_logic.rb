@@ -5,7 +5,7 @@ class Player
 
   def initialize(name, symbol, player_id)
     @array = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
-    @name = name
+    @name = name.strip.empty? ? symbol : name
     @symbol = symbol
     @player_id = player_id
   end
