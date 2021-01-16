@@ -5,7 +5,7 @@ class Player
 
   def initialize(name, symbol, player_id)
     @array = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
-    @name = name
+    @name = name.strip.empty? ? symbol : name
     @symbol = symbol
     @player_id = player_id
   end
@@ -56,6 +56,19 @@ class Board
   def update_board(index1, index2, symbol)
     @interface_board[index1][index2] = symbol
   end
+
+  def calculate_index(selected_index)
+    outter = nil
+    inner = nil
+    @interface_board.each_with_index do |item, outter_index|
+      inner = item.find_index(selected_index.to_s) if inner.nil?
+      outter = outter_index
+      break unless inner.nil?
+    end
+    raise 'The selected index is not available' if inner.nil?
+
+    [outter, inner]
+  end
 end
 
 class Game
@@ -80,19 +93,16 @@ class Game
     @current_player = player if current_player.nil?
   end
 
+  def last_registered_player
+    @players[-1]
+  end
+
   def board
     @board.printable_board
   end
 
   def execute_turn(selected_index)
-    outter = nil
-    inner = nil
-    @board.printable_board.each_with_index do |item, outter_index|
-      inner = inner.nil? ? item.find_index(selected_index.to_s) : break
-      outter = outter_index
-    end
-    raise 'The selected index is not available' if inner.nil?
-
+    outter, inner = @board.calculate_index(selected_index)
     @board.update_board(outter, inner, @current_player.symbol)
     @current_player.update_player_board(outter, inner, @board.cell(outter, inner))
     return true if current_player.winner?(@board.magic_number)
