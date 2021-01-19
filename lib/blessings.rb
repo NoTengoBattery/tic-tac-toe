@@ -3,7 +3,9 @@
 # Brief description: Blessings is a Ruby module inspired in "curses"
 module Blessings
   def self.insert_newline(lines)
-    lines.times { print "\n" }
+    lines.times do
+      print "\n"
+    end
   end
 
   def self.relative_move_to(horizontal, vertical)
@@ -35,12 +37,22 @@ module Blessings
     print("\e[31m")
   end
 
+  def self.green
+    print("\e[32m")
+  end
+
+  def self.yellow
+    print("\e[33m")
+  end
+
   def self.reset_color
     print("\e[0m")
   end
 
   def self.horizontal_bar(content, repetitions)
-    repetitions.times { print content }
+    repetitions.times do
+      print content
+    end
   end
 
   def self.vertical_bar(content, repetitions)
@@ -79,7 +91,7 @@ module Blessings
   end
 
   def self.box(content, space, border, sides = {})
-    return nil unless /^\S$/.match?('@')
+    return nil unless /^\S$/.match?(border)
 
     side_length = 2 + 2 * space + content.length
     top_square_border(border, side_length) if sides[:top]
