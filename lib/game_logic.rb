@@ -4,7 +4,7 @@ class Player
   attr_reader :name, :symbol
 
   def initialize(name, symbol, player_id)
-    @array = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+    @array = Array.new(3) { Array.new(3) { 0 } }
     @name = name.strip.empty? ? symbol : name
     @symbol = symbol
     @player_id = player_id
@@ -18,16 +18,16 @@ class Player
     player_magic = magic_number * @player_id
     magic_sum_d1 = 0
     magic_sum_d2 = 0
-    @array.length.times do |outter_index|
+    @array.length.times do |outer_index|
       magic_sum_row = 0
       magic_sum_col = 0
-      @array[outter_index].length.times do |inner_index|
-        magic_sum_row += @array[outter_index][inner_index]
-        magic_sum_col += @array[inner_index][outter_index]
+      @array[outer_index].length.times do |inner_index|
+        magic_sum_row += @array[outer_index][inner_index]
+        magic_sum_col += @array[inner_index][outer_index]
       end
-      d2_index = @array.length - 1 - outter_index
-      magic_sum_d1 += @array[outter_index][outter_index]
-      magic_sum_d2 += @array[outter_index][d2_index]
+      d2_index = @array.length - 1 - outer_index
+      magic_sum_d1 += @array[outer_index][outer_index]
+      magic_sum_d2 += @array[outer_index][d2_index]
       return true if magic_sum_row == player_magic or magic_sum_col == player_magic
     end
     return true if magic_sum_d1 == player_magic or magic_sum_d2 == player_magic
@@ -58,16 +58,16 @@ class Board
   end
 
   def calculate_index(selected_index)
-    outter = nil
     inner = nil
-    @interface_board.each_with_index do |item, outter_index|
+    outer = nil
+    @interface_board.each_with_index do |item, outer_index|
       inner = item.find_index(selected_index.to_s) if inner.nil?
-      outter = outter_index
+      outer = outer_index
       break unless inner.nil?
     end
     raise 'The selected index is not available' if inner.nil?
 
-    [outter, inner]
+    [outer, inner]
   end
 end
 
@@ -102,9 +102,9 @@ class Game
   end
 
   def execute_turn(selected_index)
-    outter, inner = @board.calculate_index(selected_index)
-    @board.update_board(outter, inner, @current_player.symbol)
-    @current_player.update_player_board(outter, inner, @board.cell(outter, inner))
+    outer, inner = @board.calculate_index(selected_index)
+    @board.update_board(outer, inner, @current_player.symbol)
+    @current_player.update_player_board(outer, inner, @board.cell(outer, inner))
     return true if current_player.winner?(@board.magic_number)
 
     @_selector = (@_selector + 1) % @players.length
