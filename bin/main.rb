@@ -23,24 +23,20 @@ end
 
 game = Game.new
 puts '~~~~~~~ Welcome to TicTacToe ~~~~~~~'
-puts
-print 'Enter name for player 1: '
-player1_name = gets.chomp
-game.register_player(player1_name)
-player1 = game.last_registered_player
-puts "Player #{player1.name} is #{player1.symbol}"
-print 'Enter name for player 2: '
-player2_name = gets.chomp
-game.register_player(player2_name)
-player2 = game.last_registered_player
-puts "Player #{player2.name} is #{player2.symbol}"
-puts
+2.times do |time|
+  time += 1
+  print "Enter name for player #{time}: "
+  game.register_player(gets.chomp)
+  player = game.last_registered_player
+  puts "Player ##{time} (#{player.name}) is #{player.symbol}"
+  puts
+end
 puts '~~~~~~~  Get ready to play!  ~~~~~~~'
 print_board(game.board, '*')
 
 until game.game_draw
   current_player = game.current_player
-  print "Turn ##{game.turn}: #{current_player.name} enter the coordinates for #{current_player.symbol}: "
+  print "Turn ##{game.turn}: #{current_player.name}, please enter the coordinates for #{current_player.symbol}: "
   begin
     position = gets.chomp.to_i
   rescue Interrupt
@@ -68,8 +64,11 @@ end
 
 print 'End of the game: '
 if game.game_draw
+  Blessings.yellow
   puts 'No winner, game ended in a draw'
 else
+  Blessings.green
   puts "Player #{current_player.name} (played #{current_player.symbol}) won the game in turn ##{game.turn}"
 end
+Blessings.reset_color
 print_board(game.board, '+')
