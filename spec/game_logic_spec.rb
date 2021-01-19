@@ -42,12 +42,37 @@ RSpec.describe 'Player' do
     name_player.update_player_board(2, 2, MOCK_MAGIC_SQUARE)
     expect(name_player.winner?(MOCK_MAGIC_NUMBER)).to eq(true)
   end
-  it '' do
+  it 'detects when there is no winning condition on the board' do
     name_player.update_player_board(0, 0, MOCK_MAGIC_SQUARE)
     name_player.update_player_board(0, 1, MOCK_MAGIC_SQUARE)
     name_player.update_player_board(1, 2, MOCK_MAGIC_SQUARE)
     name_player.update_player_board(2, 0, MOCK_MAGIC_SQUARE)
     name_player.update_player_board(2, 2, MOCK_MAGIC_SQUARE)
     expect(name_player.winner?(MOCK_MAGIC_NUMBER)).not_to eq(true)
+  end
+end
+
+RSpec.describe 'Board' do
+  let(:board) { Board.new }
+  let(:outer) { rand(0..2) }
+  let(:inner) { rand(0..2) }
+  let(:input) { outer * 3 + inner + 1 }
+  it 'Calculates outer index' do
+    outer_index, _inner_index = board.calculate_index(input)
+    expect(outer_index).to eq(outer)
+  end
+  it 'Calculates inner index' do
+    _outer_index, inner_index = board.calculate_index(input)
+    expect(inner_index).to eq(inner)
+  end
+  it 'checks if the board is updating the symbol in the correct index' do
+    outer, inner = board.calculate_index(input)
+    board.update_board(outer, inner, PLAYER_SYMBOL)
+    expect(board.printable_board[outer][inner]).to eq(PLAYER_SYMBOL)
+  end
+  it 'Raise exception if the cell is already taken' do
+    outer, inner = board.calculate_index(input)
+    board.update_board(outer, inner, PLAYER_SYMBOL)
+    expect { board.calculate_index(input) }.to raise_error(StandardError)
   end
 end
