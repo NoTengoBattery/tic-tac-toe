@@ -9,6 +9,7 @@ PLAYER_SYMBOL = 'X'.freeze
 PLAYER_ID = 1
 MOCK_MAGIC_SQUARE = 1
 MOCK_MAGIC_NUMBER = 3
+REAL_MAGIC_NUMBER = 111
 
 RSpec.describe 'Player' do
   let(:noname_player) { Player.new(PLAYER_EMPTY_NAME, PLAYER_SYMBOL, PLAYER_ID) }
@@ -138,5 +139,42 @@ RSpec.describe 'Game' do
       next_player = game.current_player
     end
     expect(next_player).to eq(current_player)
+  end
+  it 'See if player 1 wins' do
+    game.register_player(PLAYER_NAME)
+    game.register_player(PLAYER2_NAME)
+    game.execute_turn(1)
+    game.execute_turn(8)
+    game.execute_turn(2)
+    game.execute_turn(7)
+    game.execute_turn(3)
+    expect(game.current_player.name).to eq(PLAYER_NAME)
+    expect(game.current_player.winner?(REAL_MAGIC_NUMBER)).to eq(true)
+  end
+  it 'See if player 2 wins' do
+    game.register_player(PLAYER_NAME)
+    game.register_player(PLAYER2_NAME)
+    game.execute_turn(5)
+    game.execute_turn(1)
+    game.execute_turn(9)
+    game.execute_turn(2)
+    game.execute_turn(7)
+    game.execute_turn(3)
+    expect(game.current_player.name).to eq(PLAYER2_NAME)
+    expect(game.current_player.winner?(REAL_MAGIC_NUMBER)).to eq(true)
+  end
+  it 'see if the game is a draw' do
+    game.register_player(PLAYER_NAME)
+    game.register_player(PLAYER2_NAME)
+    game.execute_turn(1)
+    game.execute_turn(3)
+    game.execute_turn(2)
+    game.execute_turn(4)
+    game.execute_turn(6)
+    game.execute_turn(5)
+    game.execute_turn(7)
+    game.execute_turn(8)
+    game.execute_turn(9)
+    expect(game.game_draw).to eq(true)
   end
 end
